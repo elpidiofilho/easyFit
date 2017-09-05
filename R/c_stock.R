@@ -10,5 +10,6 @@
 #' @examples
 #' \dontrun{
 #' df = c_stock
+#'
 #' }
 "c_stock"

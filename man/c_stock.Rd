@@ -14,6 +14,7 @@ This data comes Brazilian data soil carbon stock
 \examples{
 \dontrun{
 df = c_stock
+
 }
 }
 \keyword{datasets}
