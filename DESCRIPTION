@@ -1,6 +1,6 @@
 Package: easyFit
 Type: Package
-Title: What the Package Does (Title Case)
+Title:  Routines for fit classification and regression models in easy way
 Version: 0.1.1
 Author: Elpidio I. Fernandes Filho
 Maintainer: Elpidio Filho <elpidio@ufv.br>
@@ -22,7 +22,7 @@ Description: Description: easyFit is a package of routines for adjusting classif
       The Caret package creates a standard interface for accessing a few hundred models,
       is a Swiss Army knife of data modeling.
 License: GPL-2
-Imports: caret, doParallel, dplyr, ggplot2, tidyr, viridis
+Imports: caret, doParallel, dplyr, ggplot2, tidyr, viridis, corrplot, knitr
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 6.0.1

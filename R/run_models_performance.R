@@ -42,7 +42,7 @@
 # 'models = c("ridge", "rf", "cubist","pls")
 # 'fit_models = run_models(df = dfsel, models = models,
 #'                         cpu_cores = 7, tune_length = 5, metric = "Rsquared")
-# 'dfresult = run_models_performance(fit_models, df.valida = teste, verbose = F)
+# 'dfresult = run_models_performance(fit_models, df.valida = teste, verbose = T)
 # 'head(dfresult)
 #' }
 #' @export
@@ -50,6 +50,7 @@
 
 
 run_models_performance <- function(fit.run.model, df.valida, verbose = FALSE) {
+  fit = NULL
   if (fit[[1]]$modelType == "Classification"){
     return(rmp_classificacao(fit.run.model, df.valida, verbose))
   } else {
@@ -60,6 +61,7 @@ run_models_performance <- function(fit.run.model, df.valida, verbose = FALSE) {
 getwd()
 
 rmp_regressao <- function(fit.run.model, df.valida, verbose = FALSE) {
+  predito = observado = model = mbe = mae = rmse = nse = r2 = var_exp = var = valor = NULL
   nm = length(fit.run.model)
   summ_model = dplyr::tibble(model = character(nm), fit = list(nm), dfpredobs = list(nm),
                       mbe = numeric(nm), mae = numeric(nm),
@@ -122,6 +124,35 @@ get_density <- function(x, y, n = 100) {
   return(dens$z[ii])
 }
 
+## from library MASS
+## https://github.com/cran/MASS/blob/master/R/kde2d.R
+kde2d <- function(x, y, h, n = 25, lims = c(range(x), range(y)) )
+{
+  bandwidth.nrd = NULL
+  dnorm = NULL
+  nx <- length(x)
+  if(length(y) != nx)
+    stop("data vectors must be the same length")
+  if(any(!is.finite(x)) || any(!is.finite(y)))
+    stop("missing or infinite values in the data are not allowed")
+  if(any(!is.finite(lims)))
+    stop("only finite values are allowed in 'lims'")
+  n <- rep(n, length.out = 2L)
+  gx <- seq.int(lims[1L], lims[2L], length.out = n[1L])
+  gy <- seq.int(lims[3L], lims[4L], length.out = n[2L])
+  h <- if (missing(h)) c(bandwidth.nrd(x), bandwidth.nrd(y))
+  else rep(h, length.out = 2L)
+  if (any(h <= 0))
+    stop("bandwidths must be strictly positive")
+  h <- h/4                            # for S's bandwidth scale
+  ax <- outer(gx, x, "-" )/h[1L]
+  ay <- outer(gy, y, "-" )/h[2L]
+  z <- base::tcrossprod(matrix(dnorm(ax), , nx), matrix(dnorm(ay), , nx))/ (nx * h[1L] * h[2L])
+  list(x = gx, y = gy, z = z)
+}
+
+
+
 pred_acc <- function (obs, pred) {
   mu <- mean(obs)
   mbe <- mean(obs - pred)              ## mean bias error ()
@@ -133,8 +164,8 @@ pred_acc <- function (obs, pred) {
   rrmse <- rmse / mu * 100             ## relative root mean square error
   mo = mean((obs - mu) ^ 2)
   nse = 1 -  (mse / mo)                ## Nash-Sutcliffe efficiency
-  r2 = cor(obs,pred) ^ 2
-  t = t.test(obs,pred,paired=TRUE)
+  r2 = stats::cor(obs,pred) ^ 2
+  t = stats::t.test(obs,pred,paired=TRUE)
   vecv <- (1 - sum((obs - pred) ^ 2) /
              sum((obs - mean(obs)) ^ 2)) * 100 ## variance explained by predictive models
 
@@ -146,6 +177,7 @@ pred_acc <- function (obs, pred) {
 
 
 rmp_classificacao <- function(fit.run.model, df.valida, verbose = FALSE) {
+  Freq = var = valor = Prediction = Reference = model = NULL
   nm = length(fit.run.model)
   summ_model = dplyr::tibble(model = character(nm), fit = list(nm), dfpredobs = list(nm),
                              accuracy = numeric(nm), Kappa = numeric(nm), byclass = list(nm), cf = list(nm),
@@ -203,5 +235,35 @@ rmp_classificacao <- function(fit.run.model, df.valida, verbose = FALSE) {
       geom_text(aes(label = round(valor, 3)), vjust = 1.5) +  facet_wrap(~ var))
   }
   return(summ_model)
+}
+
+
+## from scales package
+## https://github.com/hadley/scales
+
+zero_range <- function (x, tol = 1000 * .Machine$double.eps)
+{
+  if (length(x) == 1)
+    return(TRUE)
+  if (length(x) != 2)
+    stop("x must be length 1 or 2")
+  if (any(is.na(x)))
+    return(NA)
+  if (x[1] == x[2])
+    return(TRUE)
+  if (all(is.infinite(x)))
+    return(FALSE)
+  m <- min(abs(x))
+  if (m == 0)
+    return(FALSE)
+  abs((x[1] - x[2])/m) < tol
+}
+
+rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE))
+{
+  if (zero_range(from) || zero_range(to)) {
+    return(ifelse(is.na(x), NA, mean(to)))
+  }
+  (x - from[1])/diff(from) * diff(to) + to[1]
 }
 

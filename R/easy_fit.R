@@ -23,8 +23,8 @@
 #' @importFrom caret rfFuncs
 #' @importFrom caret contr.ltfr
 #' @importFrom caret dummyVars
-#' @importFrom dplyr select tibble
-#' @importFrom stats as.formula
+#' @importFrom dplyr select tibble one_of '%>%'
+#' @importFrom stats as.formula predict na.omit
 #' @author Elpidio Filho, \email{elpidio@ufv.br}
 #' @details details
 #' @export
