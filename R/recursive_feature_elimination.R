@@ -14,6 +14,7 @@
 #' @param df   dataframe, with income variable in the first column
 #' @param index  Users cross validation folds. Default = NULL
 #' @param nfolds   Number of folds to be build in cross-validation. Default = 10
+#' @param repeats repeats
 #' @param sizes A numeric vector of integers corresponding to the number of features
 #'  that should be retained. Default = c(2:5,10)
 #' @param fun Default = rfFuncs , get importance values from Random Forest model.
@@ -42,38 +43,52 @@ recursive_feature_elimination <- function(df,
                                           sizes = c(2:5, 10),
                                           index = NULL,
                                           nfolds = 5,
+                                          repeats = 1,
                                           fun = rfFuncs,
                                           cpu_cores = 6,
-                                          metric = ifelse(is.factor(df[,1]),"Kappa", "Rsquared"),
+                                          metric = ifelse(is.factor(df[, 1]), "Kappa", "Rsquared"),
                                           seeds = NULL,
-                                          verbose = TRUE){
+                                          verbose = TRUE) {
   if (!is.data.frame(df)) stop("df is not a dataframe")
-   if (is.null(metric)){
+  if (is.null(metric)) {
     if (is.numeric(df[, 1])) {
       metric <- "Rsquared"
     } else {
       metric <- "Kappa"
     }
   }
-  if (nfolds == 0 ){
+  if (nfolds == 0) {
     method <- "none"
     tune_length <- NULL
   } else {
-    if (nfolds >= nrow(df)){
+    if (nfolds >= nrow(df)) {
       method <- "LOOCV"
     } else {
       method <- "CV"
     }
+    if (repeats > 1) method <- "repeatedcv"
   }
 
-  if (is.null(seeds)) {
-    seedsvec = NULL
+
+  totalSize <- if(any(sizes == (ncol(df)) -1)) length(sizes) else length(sizes) + 1
+  if(is.null(seeds)){
+    seedsvec <- NULL
   } else {
     set.seed(seeds)
-    seedsvec <- vector(mode = "list", length = nfolds + 1)
-    for (i in 1:nfolds) seedsvec[[i]] <- sample.int(n = 1000, 400)
-    seedsvec[[nfolds + 1]] <- sample.int(1000, 1)
+    vseeds <- vector(mode = "list", length = (nfolds * repeats) + 1)
+    vseeds <- lapply(vseeds, function(x) sample.int(n = 100000, size = totalSize))
+    vseeds[[nfolds * repeats + 1]] <- sample.int(n = 100000, size = 1)
+    seedsvec <- vseeds
   }
+
+#  if (is.null(seeds)) {
+#    seedsvec <- NULL
+#  } else {
+#    set.seed(seeds)
+#    seedsvec <- vector(mode = "list", length = nfolds + 1)
+#    for (i in 1:nfolds) seedsvec[[i]] <- sample.int(n = 1000, 400)
+#    seedsvec[[nfolds + 1]] <- sample.int(1000, 1)
+#  }
 
 
   inicio <- Sys.time()
@@ -83,14 +98,21 @@ recursive_feature_elimination <- function(df,
     doParallel::registerDoParallel(cl)
   }
   if (is.null(index)) {
-  rfProfile <- caret::rfe(formula = formula, data = df,  sizes = sizes, metric = metric,
-                   rfeControl = rfeControl(method = "cv", functions = fun, number = nfolds,
-                                           seeds = seedsvec))
+    rfProfile <- caret::rfe(
+      formula = formula, data = df, sizes = sizes, metric = metric,
+      rfeControl = rfeControl(
+        method = "cv", functions = fun, number = nfolds,
+        seeds = seedsvec
+      )
+    )
   } else {
-    rfProfile <- caret::rfe(formula = formula, data = df,  sizes = sizes, metric = metric,
-                     rfeControl = rfeControl(method = "cv", functions = fun, number = nfolds,
-                                             seeds = seedsvec, index = index))
-
+    rfProfile <- caret::rfe(
+      formula = formula, data = df, sizes = sizes, metric = metric,
+      rfeControl = rfeControl(
+        method = "cv", functions = fun, number = nfolds,
+        seeds = seedsvec, index = index
+      )
+    )
   }
   if (!is.null(cl)) {
     parallel::stopCluster(cl)
@@ -99,8 +121,63 @@ recursive_feature_elimination <- function(df,
     print("=======================================================================")
     print("Recursive Feature Elimination")
     print(paste("outcome : ", names(df)[1], sep = ""))
-    print(paste('Selected vars :', paste(rfProfile$optVariables, collapse = ",")))
-    print(paste("time elapsed :", round((Sys.time() - inicio), 3)))
+    print(paste("Selected vars :", paste(rfProfile$optVariables, collapse = ",")))
+    print(paste("time elapsed", hms_span(inicio, Sys.time())))
   }
   return(rfProfile)
+}
+
+
+
+#' Recursive Feature Elimination plot results
+#'
+#' This function plot results of Recursive Feature Elimination (RFE)
+#'
+#'
+#' @param fit.rfe Results from recursive_feature_elimination  function
+#' @keywords Recursive Feature Elimination results plot
+#' @details  details
+#' @importFrom ggplot2 ggplot aes geom_line geom_point geom_smooth facet_wrap
+#' @importFrom ggplot2 xlim xlab ylab theme_bw scale_x_continuous scale_y_continuous
+#' @importFrom tidyr gather
+#' @importFrom caret trainControl rfe rfeControl rfFuncs
+#' @importFrom knitr kable
+#' @author Elpidio Filho, \email{elpidio@ufv.br}
+#' @examples
+#' \dontrun{
+#' rfe_result(fi.rfe)
+#' }
+
+#' @export
+#'
+rfe_result <- function(fit.rfe) {
+  ddd <- fit.rfe$results
+  mx <- max(ddd$results[,3])
+  wm <- which.max(ddd[,3])
+  ddd$tol <- NA
+  for (i in 1:wm) {
+    ddd$tol[i] <- abs(ddd[i, 3] - ddd[wm, 3])/  ddd[wm, 3] * 100
+  }
+  dddg = ddd %>% na.omit %>% tidyr::gather(key = var, value = Value, -Variables )
+  g1 <- ggplot2::ggplot(dddg, aes(x = Variables, y = Value)) +
+    ggplot2::geom_line()  +
+    ggplot2::geom_point() +
+    ggplot2::geom_smooth() +
+    ggplot2::scale_x_continuous(breaks = dddg$Variables) +
+    ggplot2::facet_wrap(~var, scales = 'free')
+
+  ddd.na = ddd %>% na.omit
+  g2 <- ggplot2::ggplot(data = ddd.na , aes(x = Variables, y = tol)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line() +
+    ggplot2::geom_label(label = round(ddd.na$tol, 1), nudge_y = 0.5) +
+   # ggplot2::xlim(min(ddd.na$Variables), ddd.na$Variables[wm])  +
+    ggplot2::scale_x_continuous(breaks = ddd.na$Variables) +
+    ggplot2::scale_y_continuous(breaks = c(0:round(max(ddd.na$tol)))) +
+    ggplot2::ylab("tolerance (%)") + xlab('number of selected variables')
+  ggplot2::theme_bw()
+  print(g1)
+  print(g2)
+  knitr::kable(ddd[1:wm,], digits = 3, col.names = names(ddd))
+  return(ddd)
 }

@@ -5,7 +5,7 @@
 \title{This function performs the training of the chosen regressor}
 \usage{
 regression(df.train, formula = NULL, preprocess = NULL, regressor = "rf",
-  nfolds = 10, repeats = 1, index = NULL, cpu_cores = 3,
+  nfolds = 10, repeats = NA, index = NULL, cpu_cores = 3,
   tune_length = 5, metric = "Rsquared", seeds = NULL, verbose = FALSE)
 }
 \arguments{
@@ -15,7 +15,7 @@ regression(df.train, formula = NULL, preprocess = NULL, regressor = "rf",
 
 \item{preprocess}{pre process}
 
-\item{regressor}{Choice of regressor to be used to train model. Uses algoritms names from Caret package.}
+\item{regressor}{Choice of regressor to be used to train model. Uses  algortims names from Caret package.}
 
 \item{nfolds}{Number of folds to be build in crossvalidation}
 
@@ -41,7 +41,7 @@ details
 }
 \examples{
 \dontrun{
-regression(train,"rf",10,6)
+regression(df.train = df, regressor = "rf", metric = "Rsquared", seeds = 313)
 }
 }
 \author{

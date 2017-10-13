@@ -4,10 +4,11 @@
 \alias{run_models}
 \title{This function run many models using the same data}
 \usage{
-run_models(df, models = c("svmPoly", "rf", "gbm", "C5.0"), formula = NULL,
-  preprocess = NULL, nfolds = 10, repeats = 1, tune_length = 5,
+run_models(df, models = ifelse(is.factor(df[, 1]), c("svmPoly", "rf", "gbm",
+  "C5.0"), c("lm", "cubist", "gbm", "rf")), formula = NULL,
+  preprocess = NULL, nfolds = 10, repeats = NA, tune_length = 5,
   cpu_cores = 7, metric = ifelse(is.factor(df[, 1]), "Kappa", "Rsquared"),
-  seeds = NULL)
+  seeds = NULL, verbose = FALSE)
 }
 \arguments{
 \item{df}{Training dataframe}
@@ -29,6 +30,8 @@ run_models(df, models = c("svmPoly", "rf", "gbm", "C5.0"), formula = NULL,
 \item{metric}{metric used to evaluate model fit. For numeric outcome ("RMSE", "Rsquared)}
 
 \item{seeds}{seeds}
+
+\item{verbose}{prints results during the execution of the function}
 }
 \description{
 This function run many models using the same data
