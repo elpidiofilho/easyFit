@@ -1,0 +1,40 @@
+[0m[0KMicrosoft Windows [versão 10.0.15063][0K[?25l
+(c) 2017 Microsoft Corporation. Todos os direitos reservados.[0K
+[0K
+C:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25h^V[0K[?25lC:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25h^V[0K[?25lC:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25hecho "# easyFit" >> README.md[0K[?25l
+[0K
+C:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25hgit init[0K]0;  - git  init[?25l
+[0K[?25hReinitialized existing Git repository in C:/Dropbox (Labgeo)/R/pacote/easyFit/.git/[0K[?25l
+[0K[?25h]0; [?25l
+C:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25hgit add README.md[0K]0;  - git  add README.md[?25l
+[0K[?25h]0; [?25l
+C:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25hgit commit -m "first commit"[0K[?25l
+[0K[?25h]0;  - git  commit -m "first commit"[master (root-commit) c6aa2eb] first commit[0K[?25l
+ Committer: unknown <elpidio@Elpidio.LABGEO>[0K
+Your name and email address were configured automatically based[0K
+on your username and hostname. Please check that they are accurate.[0K
+You can suppress this message by setting them explicitly. Run the[0K
+following command and follow the instructions in your editor to edit[0K
+your configuration file:[0K
+[0K
+    git config --global --edit[0K
+[0K
+After doing this, you may fix the identity used for this commit with:[0K
+[0K
+    git commit --amend --reset-author[0K
+[0K
+ 1 file changed, 2 insertions(+)[0K
+ create mode 100644 README.md[0K
+[0K[?25h]0; [?25l
+C:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25hgit remote add origin https://github.com/elpidiofilho/easyFit.git[0K[?25l
+fatal: remote origin already exists.[0K
+[0K
+C:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25hgit push -u origin master[0K]0;  - git  push -u origin master[?25l
+[0K[?25hCounting objects: 3, done.[0K[?25l
+Writing objects: 100% (3/3), 232 bytes | 232.00 KiB/s, done.[0K
+Total 3 (delta 0), reused 0 (delta 0)[0K
+[0K[?25hTo https://github.com/elpidiofilho/easyFit.git[0K[?25l
+ * [new branch]      master -> master[0K
+[0K[?25h[?25lBranch master set up to track remote branch master from origin.[0K[1G[?25h]0; [?25l
+[0K[?25h[?25l
+C:\Dropbox (Labgeo)\R\pacote\easyFit>[0K[?25h

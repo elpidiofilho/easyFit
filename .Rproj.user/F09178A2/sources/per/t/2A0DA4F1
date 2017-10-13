@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1504554740772.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3711799366",
+    "id" : "2A0DA4F1",
+    "lastKnownWriteTime" : 1504554856,
+    "last_content_update" : 1504554856027,
+    "path" : "C:/Dropbox (Labgeo)/R/pacote/easyFit/R/classification.R",
+    "project_path" : "R/classification.R",
+    "properties" : {
+        "cursorPosition" : "19,52",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,13 @@
+Package: easyFit
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.1
+Author: Elpidio I. Fernandes Filho
+Maintainer: Elpidio Filho <elpidio@ufv.br>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GPL-2
+Imports: caret, doParallel, dplyr, ggplot2, tidyr, viridis
+Encoding: UTF-8
+LazyData: false
+RoxygenNote: 6.0.1

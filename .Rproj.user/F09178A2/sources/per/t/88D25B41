@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1504554861552.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2379404803",
+    "id" : "88D25B41",
+    "lastKnownWriteTime" : 1504554977,
+    "last_content_update" : 1504554977226,
+    "path" : "C:/Dropbox (Labgeo)/R/pacote/easyFit/R/regression.R",
+    "project_path" : "R/regression.R",
+    "properties" : {
+        "cursorPosition" : "7,107",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

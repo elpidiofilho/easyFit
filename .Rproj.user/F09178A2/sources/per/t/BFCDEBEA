@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1504552654096.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3948974400",
+    "id" : "BFCDEBEA",
+    "lastKnownWriteTime" : 1504552650,
+    "last_content_update" : 1504552650,
+    "path" : "C:/Dropbox (Labgeo)/R/pacote/easyFit/NAMESPACE",
+    "project_path" : "NAMESPACE",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_namespace"
+}
