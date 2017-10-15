@@ -14,6 +14,7 @@
 #' @param seeds  seeds
 #' @param verbose  prints results during the execution of the function
 #' @importFrom progress progress_bar
+#' @importFrom utils flush.console
 #' @keywords  models
 #' @author Elpidio Filho, \email{elpidio@ufv.br}
 #' @details details

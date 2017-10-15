@@ -22,7 +22,8 @@ clean_names <- function(df) {
   colnames(df) <- df %>%
     names() %>%
     str_to_lower() %>%
-    chartr("áàãéêíóõúÚçª", "aaaeeioouUca", .) %>%
+#    chartr("áàãéêíóõúÚçª",
+#           "aaaeeioouUca", .) %>%
   #  iconv(., "utf-8", to = "ASCII//TRANSLIT") %>%
   #  str_replace_all("\\.", "_") %>%
     str_replace_all("\\,", "_") %>%
@@ -39,13 +40,42 @@ clean_names <- function(df) {
   return(df)
 }
 
+
+# Remove Columns with too many NA values
+#'
+#' @title Remove Columns with too many NA values
+#' @description This function Remove Columns with too many NA values
+#' @importFrom dplyr %>% filter select pull
+#' @details details
+#' @examples
+#' \dontrun{
+#' remove_var_na(df, d.count.na, tolerance = 0.3, verbose = TRUE)
+#' }
 #' @export
+#'
 remove_var_na <- function(df, d.count.na, tolerance = 75, verbose = TRUE) {
+  na.relative <- variav  <- NULL
   v.remove <- d.count.na %>% filter(na_relative > tolerance) %>% pull(variav)
   dr <- df %>% select(-one_of(v.remove))
   if (verbose == TRUE) {
     print(paste(length(v.remove), 'variables removed'))
   }
   return(dr)
+}
+
+
+#' Convert variables to factor
+#'
+#' @title  Convert variables to factor
+#' @description This function  Convert variables to factor
+#' @param df  dataframe
+#' @param d.count dataframe from na_count function
+#' @param tolerance percentual maximum of NA tolerable
+#' @param verbose verbose
+#' @importFrom dplyr '%>%' mutate_at funs
+#' @export
+to_factor <- function(df, vf) {
+  df.fac <- df %>% mutate_at(vf, funs(factor))
+  return(df.fac)
 }
 

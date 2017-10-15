@@ -22,7 +22,8 @@ Description: Description: easyFit is a package of routines for adjusting classif
       The Caret package creates a standard interface for accessing a few hundred models,
       is a Swiss Army knife of data modeling.
 License: GPL-2
-Imports: caret, corrplot, doParallel, dplyr, ggplot2,  knitr, parallel, progress, raster, stringr, tidyr, viridis
+Imports: caret, corrplot, doParallel, dplyr, ggplot2,  knitr, kableExtra, parallel, progress, raster, stringr, tibble, tidyr, viridis
+Suggests: testthat, randomForest
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 6.0.1

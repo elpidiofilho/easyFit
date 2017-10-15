@@ -49,6 +49,8 @@ recursive_feature_elimination <- function(df,
                                           metric = ifelse(is.factor(df[, 1]), "Kappa", "Rsquared"),
                                           seeds = NULL,
                                           verbose = TRUE) {
+
+  cl = NULL
   if (!is.data.frame(df)) stop("df is not a dataframe")
   if (is.null(metric)) {
     if (is.numeric(df[, 1])) {
@@ -57,6 +59,7 @@ recursive_feature_elimination <- function(df,
       metric <- "Kappa"
     }
   }
+
   if (nfolds == 0) {
     method <- "none"
     tune_length <- NULL
@@ -137,20 +140,23 @@ recursive_feature_elimination <- function(df,
 #' @param fit.rfe Results from recursive_feature_elimination  function
 #' @keywords Recursive Feature Elimination results plot
 #' @details  details
-#' @importFrom ggplot2 ggplot aes geom_line geom_point geom_smooth facet_wrap
-#' @importFrom ggplot2 xlim xlab ylab theme_bw scale_x_continuous scale_y_continuous
-#' @importFrom tidyr gather
-#' @importFrom caret trainControl rfe rfeControl rfFuncs
-#' @importFrom knitr kable
 #' @author Elpidio Filho, \email{elpidio@ufv.br}
+#' @importFrom dplyr %>% filter select
+#' @importFrom tidyr gather
+#' @importFrom ggplot2 ggplot geom_point geom_line
+#' @importFrom ggplot2 geom_smooth scale_x_continuous
+#' @importFrom ggplot2 geom_label facet_wrap ylab  xlab
+#' @importFrom ggplot2 scale_x_continuous scale_y_continuous
+#' @importFrom ggplot2 theme_bw
+#' @importFrom knitr kable
 #' @examples
 #' \dontrun{
 #' rfe_result(fi.rfe)
 #' }
-
 #' @export
-#'
+
 rfe_result <- function(fit.rfe) {
+  value <- variables <- tol <- Value <- Variables <- NULL
   ddd <- fit.rfe$results
   mx <- max(ddd$results[,3])
   wm <- which.max(ddd[,3])
@@ -171,7 +177,7 @@ rfe_result <- function(fit.rfe) {
     ggplot2::geom_point() +
     ggplot2::geom_line() +
     ggplot2::geom_label(label = round(ddd.na$tol, 1), nudge_y = 0.5) +
-   # ggplot2::xlim(min(ddd.na$Variables), ddd.na$Variables[wm])  +
+    # ggplot2::xlim(min(ddd.na$Variables), ddd.na$Variables[wm])  +
     ggplot2::scale_x_continuous(breaks = ddd.na$Variables) +
     ggplot2::scale_y_continuous(breaks = c(0:round(max(ddd.na$tol)))) +
     ggplot2::ylab("tolerance (%)") + xlab('number of selected variables')
