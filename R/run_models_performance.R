@@ -337,25 +337,8 @@ rmp_regressao <- function(fit_run_model, df_valida, verbose = FALSE) {
     summ_model$nse[i] <- acc$Nash_Sutcliffe_efficiency
     summ_model$var_exp[i] <- acc$variance_explained_perc
     maxvalue <- ceiling(max(max(df_valida[, 1]), v) / 5) * 5
-    ##    summ_model$grafic1[i] <- list(ggplot2::ggplot(ddd, aes(x = predito, y = observado)) +
-    #      ggplot2::geom_point() +
-    #      ggplot2::ggtitle(paste(
-    #        fit_md$method, " R2 = ",
-    #        round(summ_model$r2[i], 3)
-    #      )) +
-    #      ggplot2::xlim(c(0, maxvalue)) + ggplot2::ylim(c(0, maxvalue)) +
-    #      ggplot2::geom_abline(slope = 1, intercept = 0, color = "red"))
-
     residuo <- ddd$residuo
-    #    density <- get_density(ddd$predito, ddd$observado)
     maxresiduo <- max(residuo)
-
-    #   summ_model$grafic2[i] <- list(ggplot2::ggplot(ddd) +
-    #      ggplot2::geom_point(aes(predito, observado, color = density ^ 0.7), size = 0.1, shape = 20) +
-    #      viridis::scale_color_viridis() +
-    #     ggplot2::xlim(c(0, maxvalue)) + ggplot2::ylim(c(0, maxvalue)) +
-    #      ggplot2::geom_abline(slope = 1, intercept = 0, color = "red") +
-    #     ggplot2::ggtitle(fit_md$method))
   }
   if (verbose == TRUE) {
     dgr <- summ_model %>%
@@ -371,45 +354,3 @@ rmp_regressao <- function(fit_run_model, df_valida, verbose = FALSE) {
 
   return(summ_model)
 }
-
-get_density <- function(x, y, n = 100) {
-  dens <- kde2d(x = x, y = y, n = n)
-  ix <- findInterval(x, dens$x)
-  iy <- findInterval(y, dens$y)
-  ii <- cbind(ix, iy)
-  return(dens$z[ii])
-}
-
-#' @importFrom stats quantile
-bandwidth.nrd <- function(x) {
-  r <- quantile(x, c(0.25, 0.75))
-  h <- (r[2L] - r[1L]) / 1.34
-  4 * 1.06 * min(sqrt(var(x)), h) * length(x) ^ (-1 / 5)
-}
-
-
-## from library MASS
-## https://github.com/cran/MASS/blob/master/R/kde2d.R
-kde2d <- function(x, y, h, n = 25, lims = c(range(x), range(y))) {
-  dnorm <- NULL
-  nx <- length(x)
-  if (length(y) != nx)
-    stop("data vectors must be the same length")
-  if (any(!is.finite(x)) || any(!is.finite(y)))
-    stop("missing or infinite values in the data are not allowed")
-  if (any(!is.finite(lims)))
-    stop("only finite values are allowed in 'lims'")
-  n <- rep(n, length.out = 2L)
-  gx <- seq.int(lims[1L], lims[2L], length.out = n[1L])
-  gy <- seq.int(lims[3L], lims[4L], length.out = n[2L])
-  h <- if (missing(h)) c(bandwidth.nrd(x), bandwidth.nrd(y))
-  else rep(h, length.out = 2L)
-  if (any(h <= 0))
-    stop("bandwidths must be strictly positive")
-  h <- h / 4 # for S's bandwidth scale
-  ax <- outer(gx, x, "-") / h[1L]
-  ay <- outer(gy, y, "-") / h[2L]
-  z <- base::tcrossprod(matrix(dnorm(ax),, nx), matrix(dnorm(ay),, nx)) / (nx * h[1L] * h[2L])
-  list(x = gx, y = gy, z = z)
-}
-

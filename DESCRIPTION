@@ -1,7 +1,7 @@
 Package: easyFit
 Type: Package
 Title:  Routines for fit classification and regression models in easy way
-Version: 0.3.0.1
+Version: 0.3.0.2
 Author: Elpidio I. Fernandes Filho
 Maintainer: Elpidio Filho <elpidio@ufv.br>
 Description: Description: easyFit is a package of routines for adjusting classification and regression models.

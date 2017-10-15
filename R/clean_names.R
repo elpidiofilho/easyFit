@@ -69,9 +69,7 @@ remove_var_na <- function(df, d.count.na, tolerance = 75, verbose = TRUE) {
 #' @title  Convert variables to factor
 #' @description This function  Convert variables to factor
 #' @param df  dataframe
-#' @param d.count dataframe from na_count function
-#' @param tolerance percentual maximum of NA tolerable
-#' @param verbose verbose
+#' @param vf vector with number of the columns to be removed
 #' @importFrom dplyr '%>%' mutate_at funs
 #' @export
 to_factor <- function(df, vf) {

@@ -9,7 +9,11 @@ to_factor(df, vf)
 \arguments{
 \item{df}{dataframe}
 
-\item{vf}{vector with names of variables to be converted to factor}
+\item{d.count}{dataframe from na_count function}
+
+\item{tolerance}{percentual maximum of NA tolerable}
+
+\item{verbose}{verbose}
 }
 \description{
 This function  Convert variables to factor
