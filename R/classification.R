@@ -63,7 +63,7 @@ classification <- function(df.train,
   }
 
   set.seed(313)
-  fit = tryCatch({
+  fit <- tryCatch({
     suppressMessages(caret::train(
       formula, data = df.train, method = classifier,
       metric = metric,

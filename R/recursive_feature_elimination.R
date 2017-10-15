@@ -158,7 +158,7 @@ rfe_result <- function(fit.rfe) {
   for (i in 1:wm) {
     ddd$tol[i] <- abs(ddd[i, 3] - ddd[wm, 3])/  ddd[wm, 3] * 100
   }
-  dddg = ddd %>% na.omit %>% tidyr::gather(key = var, value = Value, -Variables )
+  dddg <- ddd %>% na.omit %>% tidyr::gather(key = var, value = Value, -Variables )
   g1 <- ggplot2::ggplot(dddg, aes(x = Variables, y = Value)) +
     ggplot2::geom_line()  +
     ggplot2::geom_point() +
@@ -166,7 +166,7 @@ rfe_result <- function(fit.rfe) {
     ggplot2::scale_x_continuous(breaks = dddg$Variables) +
     ggplot2::facet_wrap(~var, scales = 'free')
 
-  ddd.na = ddd %>% na.omit
+  ddd.na <- ddd %>% na.omit
   g2 <- ggplot2::ggplot(data = ddd.na , aes(x = Variables, y = tol)) +
     ggplot2::geom_point() +
     ggplot2::geom_line() +

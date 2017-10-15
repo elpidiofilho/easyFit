@@ -40,9 +40,9 @@ clean_names <- function(df) {
 }
 
 #' @export
-remove_var_na <- function(df, d.count.na, tolerance = 75, verbose = T) {
-  v.remove = d.count.na %>% filter(na_relative > tolerance) %>% pull(variav)
-  dr = df %>% select(-one_of(v.remove))
+remove_var_na <- function(df, d.count.na, tolerance = 75, verbose = TRUE) {
+  v.remove <- d.count.na %>% filter(na_relative > tolerance) %>% pull(variav)
+  dr <- df %>% select(-one_of(v.remove))
   if (verbose == TRUE) {
     print(paste(length(v.remove), 'variables removed'))
   }

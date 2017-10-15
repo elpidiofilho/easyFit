@@ -72,7 +72,7 @@ rmp_regressao <- function(fit_run_model, df_valida, verbose = FALSE) {
   )
 
 
-  for (i in 1:length(fit_run_model)) {
+  for (i in seq_len(fit_run_model)) {
     fit_md <- fit_run_model[[i]]
     v <- suppressMessages(predict(fit_md, df_valida))
     ddd <- data.frame(observado = df_valida[, 1], predito = v, residuo = abs(v - df_valida[, 1]))
@@ -113,7 +113,7 @@ rmp_regressao <- function(fit_run_model, df_valida, verbose = FALSE) {
     dgr <- summ_model %>%
       select(model, mbe, mae, rmse, nse, r2, var_exp) %>%
       tidyr::gather(key = var, value = valor, -model)
-      g1 = ggplot2::ggplot(dgr, aes(x = model, y = valor, fill = model)) +
+      g1 <- ggplot2::ggplot(dgr, aes(x = model, y = valor, fill = model)) +
       ggplot2::geom_col() +
       ggplot2::geom_text(aes(label = round(valor, 3)), size = 3, vjust = 1.5) +
       ggplot2::facet_wrap(~var, scales = "free") +
@@ -208,7 +208,7 @@ rmp_classificacao <- function(fit_run_model, df_valida, verbose = FALSE) {
     accuracy = numeric(nm), Kappa = numeric(nm), byclass = list(nm), cf = list(nm),
     g1 = list(nm), g2 = list(nm)
   )
-  for (i in 1:length(fit_run_model)) {
+  for (i in seq_len(fit_run_model)) {
     fit_md <- fit_run_model[[i]]
     v <- suppressMessages(predict(fit_md, df_valida))
     ddd <- data.frame(observado = df_valida[, 1], predito = v)
@@ -367,7 +367,7 @@ plot_predict_observed_residual <- function(result, residual = FALSE) {
 #' @param vf vector with names of variables to be converted to factor
 #' @export
 to_factor <- function(df, vf) {
-  df.fac = df %>% mutate_at(vf, funs(factor))
+  df.fac <- df %>% mutate_at(vf, funs(factor))
   return(df.fac)
 }
 
