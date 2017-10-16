@@ -6,6 +6,15 @@
 \usage{
 remove_var_na(df, d.count.na, tolerance = 75, verbose = TRUE)
 }
+\arguments{
+\item{df}{dataframe}
+
+\item{d.count.na}{dataframe with NA information created by na.Count}
+
+\item{tolerance}{percentual value of tolerance of NA values in a variable}
+
+\item{verbose}{verbose}
+}
 \description{
 This function Remove Columns with too many NA values
 }
@@ -14,6 +23,6 @@ details
 }
 \examples{
 \dontrun{
-remove_var_na(df, d.count.na, tolerance = 0.3, verbose = TRUE)
+remove_var_na(df, d.count.na, tolerance = 30, verbose = TRUE)
 }
 }

@@ -46,15 +46,20 @@ clean_names <- function(df) {
 #' @title Remove Columns with too many NA values
 #' @description This function Remove Columns with too many NA values
 #' @importFrom dplyr %>% filter select pull
+#' @param df dataframe
+#' @param d.count.na dataframe with NA information created by na.Count
+#' @param tolerance percentual value of tolerance of NA values in a variable
+#' @param verbose verbose
 #' @details details
 #' @examples
 #' \dontrun{
-#' remove_var_na(df, d.count.na, tolerance = 0.3, verbose = TRUE)
+#' remove_var_na(df, d.count.na, tolerance = 30, verbose = TRUE)
 #' }
 #' @export
 #'
 remove_var_na <- function(df, d.count.na, tolerance = 75, verbose = TRUE) {
-  na.relative <- variav  <- NULL
+  na_relative <- NULL
+  variav  <- NULL
   v.remove <- d.count.na %>% filter(na_relative > tolerance) %>% pull(variav)
   dr <- df %>% select(-one_of(v.remove))
   if (verbose == TRUE) {

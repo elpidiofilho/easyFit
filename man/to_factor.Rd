@@ -9,11 +9,7 @@ to_factor(df, vf)
 \arguments{
 \item{df}{dataframe}
 
-\item{d.count}{dataframe from na_count function}
-
-\item{tolerance}{percentual maximum of NA tolerable}
-
-\item{verbose}{verbose}
+\item{vf}{vector with number of the columns to be removed}
 }
 \description{
 This function  Convert variables to factor
