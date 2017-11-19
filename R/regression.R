@@ -6,7 +6,8 @@
 #' @param formula   A formula of the form y ~ x1 + x2 + ... If users don't inform formula, the first column will be used as Y values and the others columns with x1,x2....xn
 #' @param preprocess pre process
 #' @param regressor Choice of regressor to be used to train model. Uses  algortims names from Caret package.
-#' @param nfolds     Number of folds to be build in crossvalidation
+#' @param resample_ ressample method 'boot', 'boot632', 'optimism_boot', 'boot_all', 'cv', 'repeatedcv', 'LOOCV', 'LGOCV','none', 'oob', 'timeslice', 'adaptive_cv', 'adaptive_boot', 'adaptive_LGOCV'
+#' @param nfolds Number of folds to be build in crossvalidation
 #' @param repeats repeats
 #' @param index index
 #' @param cpu_cores  Number of CPU cores to be used in parallel processing
@@ -19,6 +20,7 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom caret trainControl train getTrainPerf
 #' @importFrom stats as.formula
+#' @importFrom foreach registerDoSEQ
 #' @author Elpidio Filho, \email{elpidio@ufv.br}
 #' @details details
 #' @export
@@ -28,72 +30,60 @@
 #' }
 
 
-regression <- function(df.train,
-                       formula = NULL,
-                       preprocess = NULL,
-                       regressor = "rf",
-                       nfolds = 10,
-                       repeats =  NA,
-                       index = NULL,
-                       cpu_cores = 3,
-                       tune_length = 5,
-                       metric = "Rsquared",
-                       seeds = NULL,
-                       verbose = FALSE) {
-  # library(doParallel)
-  # library(caret)
-  if (nfolds == 0) {
-    method <- "none"
-    tune_length <- NULL
-  }
-  if (nfolds >= nrow(df.train)) {
-    method <- "LOOCV"
-  } else {
-    method <- "CV"
-  }
-  if (is.na(repeats) == FALSE) {
-    if(repeats > 1) method <- "repeatedcv"
-  }
-  #tune_length = ifelse(tune_length > (ncol(df.train) -2), (ncol(df.train) -2), tune_length)
+regression <- function(df.train, formula = NULL, preprocess = NULL,
+                       regressor = "rf", resample_ = 'cv', nfolds = 10,
+                       repeats =  NA,  index = NULL, cpu_cores = 0,
+                       tune_length = 5, metric = "Rsquared",
+                       seeds = NULL, verbose = FALSE) {
+  resample_methods = c('boot', 'boot632', 'optimism_boot', 'boot_all', 'cv',
+                       'repeatedcv', 'LOOCV', 'LGOCV','none', 'oob',
+                       'timeslice', 'adaptive_cv', 'adaptive_boot', 'adaptive_LGOCV')
+
+  if  (!any(resample_ %in% resample_methods)) stop(paste("resample method",resample, "does not exist"))
+  #lb = caret::getModelInfo(regressor, regex = FALSE)[[1]]$library
+#  if (is.null(lb) == FALSE){
+#    print(paste("loading library", lb))
+#    suppressPackageStartupMessages(library(lb, character.only = TRUE))
+#  }
 
   inicio <- Sys.time()
-  if (is.null(formula)) {
-    formula <- as.formula(paste(names(df.train)[1], "~ ."))
-  }
-  tc <- suppressMessages(caret::trainControl(
-    method = method,
-    number = nfolds,
-    repeats = repeats,
-    index = index,
-    savePredictions = "final",
-    returnResamp = "final",
-    seeds = seeds,
-    verboseIter = FALSE
-  ))
+  tc <- caret::trainControl( method = resample_, number = nfolds,
+                             repeats = repeats,  index = index,
+                             seeds = seeds)
 
-  if (cpu_cores > 0) {
+
+    if (cpu_cores > 0) {
     cl <- parallel::makePSOCKcluster(cpu_cores)
     doParallel::registerDoParallel(cl)
+    on.exit(stopCluster(cl))
+  } else {
+    cl = NULL
   }
 
-  fit <- tryCatch({
-    suppressMessages(caret::train(
-      formula,
-      data = df.train,
-      method = regressor,
-      metric = metric,
-      trControl = tc,
-      verbose = FALSE,
-      tuneLength = tune_length,
-      preProcess = preprocess
-    ))},
-    error = function(e){NULL})
+  if (is.null(formula)) {
+    fit <- tryCatch({
+      caret::train(x = df.train[, -1], y = df.train[, 1],
+                   method = regressor, metric = metric,
+                   trControl = tc, tuneLength = tune_length,
+                   preProcess = preprocess
+      )},
+      error = function(e){NULL})
+  } else {
+    fit <- tryCatch({
+      caret::train(formula, data = df.train, method = regressor,
+                   metric = metric,trControl = tc, tuneLength = tune_length,
+                   preProcess = preprocess
+      )},
+      error = function(e){NULL})
+  }
+
   if (!is.null(cl)) {
-    parallel::stopCluster(cl)
+    #parallel::stopCluster(cl)
+    foreach::registerDoSEQ()
   }
   if (verbose == TRUE) {
-  #  print(paste("time elapsed : ", hms_span(inicio, Sys.time())))
-  #   print(caret::getTrainPerf(fit))
+    #  print(paste("time elapsed : ", hms_span(inicio, Sys.time())))
+    #   print(caret::getTrainPerf(fit))
   }
   return(fit)
 }

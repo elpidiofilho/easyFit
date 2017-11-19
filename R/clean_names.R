@@ -14,18 +14,16 @@
 #' }
 #' @export
 
-
-
-
 clean_names <- function(df) {
-  "." <- NULL
+#  "." <- NULL
   colnames(df) <- df %>%
     names() %>%
     str_to_lower() %>%
 #    chartr("áàãéêíóõúÚçª",
 #           "aaaeeioouUca", .) %>%
   #  iconv(., "utf-8", to = "ASCII//TRANSLIT") %>%
-  #  str_replace_all("\\.", "_") %>%
+    str_replace_all("\\.", "_") %>%
+    str_replace_all("\\..", "_") %>%
     str_replace_all("\\,", "_") %>%
     str_replace_all(" ", "_") %>%
     str_replace_all("-", "_") %>%
@@ -57,13 +55,13 @@ clean_names <- function(df) {
 #' }
 #' @export
 #'
-remove_var_na <- function(df, d.count.na, tolerance = 75, verbose = TRUE) {
+remove_var_na <- function(df, d_count_na, tolerance = 75, verbose = TRUE) {
   na_relative <- NULL
   variav  <- NULL
-  v.remove <- d.count.na %>% filter(na_relative > tolerance) %>% pull(variav)
+  v.remove <- d_count_na %>% filter(na_relative > tolerance) %>% pull(variav)
   dr <- df %>% select(-one_of(v.remove))
   if (verbose == TRUE) {
-    print(paste(length(v.remove), 'variables removed'))
+    print(paste(length(v.remove), "variables removed"))
   }
   return(dr)
 }
@@ -81,4 +79,3 @@ to_factor <- function(df, vf) {
   df.fac <- df %>% mutate_at(vf, funs(factor))
   return(df.fac)
 }
-
